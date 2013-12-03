@@ -1,4 +1,5 @@
 #pragma config(Hubs,  S1, HTMotor,  HTServo,  HTMotor,  none)
+#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
 #pragma config(Sensor, S2,     IROne,          sensorI2CCustom)
 #pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop, encoder)
@@ -16,6 +17,18 @@
 int left;
 int right;
 
+void harvesterMotors()
+{
+	if(abs(joystick.joy2_y2) > 10)
+	{
+		motor[motorG] = joystick.joy2_y2;
+	}
+	else
+	{
+		motor[motorG] = 0;
+	}
+}
+
 void liftMotors()
 {
 	int liftFullSpeed = 50;
@@ -23,31 +36,26 @@ void liftMotors()
 	if(joystick.joy2_Buttons == pow(2, 1))
 	{
 		motor[motorF] = liftFullSpeed;
-		motor[motorG] = liftFullSpeed;
 		wait1Msec(1);
 	}
 	else if(joystick.joy2_Buttons == pow(2, 0))
 	{
 		motor[motorF] = -liftFullSpeed;
-		motor[motorG] = -liftFullSpeed;
 		wait1Msec(1);
 	}
 	else if(joystick.joy2_Buttons == pow(2, 2))
 	{
 		motor[motorF] = -liftHalfSpeed;
-		motor[motorG] = -liftHalfSpeed;
 		wait1Msec(1);
 	}
 	else if(joystick.joy2_Buttons == pow(2, 3))
 	{
 		motor[motorF] = liftHalfSpeed;
-		motor[motorG] = liftHalfSpeed;
 		wait1Msec(1);
 	}
 	else
 	{
 		motor[motorF] = 0;
-		motor[motorG] = 0;
 		wait1Msec(1);
 	}
 }
@@ -111,6 +119,7 @@ task main()
 	{
 		getJoystickSettings(joystick);
 		driveMotors();
+		harvesterMotors();
 		liftMotors();
 	}
 }
