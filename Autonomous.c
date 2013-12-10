@@ -1,7 +1,7 @@
 #pragma config(Hubs,  S1, HTMotor,  HTServo,  HTMotor,  none)
-#pragma config(Sensor, S2,     IROne,          sensorI2CCustom)
-#pragma config(Sensor, S3,     IRTwo,          sensorI2CCustom)
-#pragma config(Sensor, S4,     lightSensor,    sensorLightActive)
+#pragma config(Sensor, S1,     ,               sensorI2CMuxController)
+#pragma config(Sensor, S2,     IROne,          sensorHiTechnicIRSeeker1200)
+#pragma config(Sensor, S3,     IRTwo,          sensorHiTechnicIRSeeker1200)
 #pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop, encoder)
 #pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, reversed)
@@ -73,7 +73,7 @@ void turnTinyLeft()
 
 void turnHalfRight()
 {
-	int ticks = 1325;
+	int ticks = 1300;
 	motor[motorD] = 50;
 	motor[motorE] = -50;
 	nMotorEncoder[motorD] = 0;
@@ -285,29 +285,41 @@ task main()
 	//waitForStart();
 
 	//get off the wall
-	move(15,15,750);
+	move(15,15,730);
 	//set parrallel to baskets
 	turnHalfRight();
 	wait1Msec(1000);
 	//score basket 1
 	move(15,26,650);
-	score();
+	if(SensorValue[IROne] == 5 || SensorValue[IROne] == 4)
+	{
+		score();
+	}
 	//score bastket 2
-	move(15,26,1000);
-	score();
+	move(15,26,950);
+	if(SensorValue[IROne] == 5  || SensorValue[IROne] == 4)
+	{
+		score();
+	}
 	//score basket 3
-	move(15,26,2150);
-	score();
+	move(15,26,1950);
+	if(SensorValue[IROne] == 5 || SensorValue[IROne] == 4)
+	{
+		score();
+	}
 	//score basket 4
 	move(15,26,1000);
-	score();
+	if(SensorValue[IROne] == 5  || SensorValue[IROne] == 4)
+	{
+		score();
+	}
 	//move past last basket
 	move(15,15,2250);
 	//turn towards ramp
 	turnLeft();
 	wait1Msec(1000);
 	//line up with ramp
-	move(15,15,4000);
+	move(35,35,4000);
 	//turn to line up with ramp
 	turnLeft();
 	wait1Msec(1000);
