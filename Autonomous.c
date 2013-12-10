@@ -2,8 +2,8 @@
 #pragma config(Sensor, S2,     IROne,          sensorI2CCustom)
 #pragma config(Sensor, S3,     IRTwo,          sensorI2CCustom)
 #pragma config(Sensor, S4,     lightSensor,    sensorLightActive)
-#pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop, reversed, encoder)
-#pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C1_1,     motorD,        tmotorTetrix, openLoop, encoder)
+#pragma config(Motor,  mtr_S1_C1_2,     motorE,        tmotorTetrix, openLoop, reversed, encoder)
 #pragma config(Motor,  mtr_S1_C3_1,     motorF,        tmotorTetrix, openLoop, reversed)
 #pragma config(Motor,  mtr_S1_C3_2,     motorG,        tmotorTetrix, openLoop)
 #pragma config(Servo,  srvo_S1_C2_1,    servo1,               tServoStandard)
@@ -22,30 +22,30 @@
 
 #include "JoystickDriver.c"
 #include "hitechnic-irseeker-v2.h"
-
 bool foundIR;
 
 void initializeRobot()
 {
-	//servo[] = ; //set the servos to their orignal positions
-	//servo[] = ;
 	servo[servo1] = 255;
 	servo[servo2] = 0;
 	wait1Msec(10);
-	servoChangeRate[servo1] = 5;
-	servoChangeRate[servo2] = 5;
 }
 
 void score()
 {
+	servoChangeRate[servo1] = 20;
+	servoChangeRate[servo2] = 20;
 	servo[servo1] = 0;
 	servo[servo2] = 255;
-	wait1Msec(100);
+	wait1Msec(2000);
+	servo[servo1] = 255;
+	servo[servo2] = 0;
+	wait1Msec(2000);
 }
 
-void turnHalfRight()
+void turnHalfLeft()
 {
-	int ticks = 1675/2;
+	int ticks = 1031;
 	motor[motorD] = -35;
 	motor[motorE] = 35;
 	nMotorEncoder[motorE] = 0;
@@ -57,12 +57,25 @@ void turnHalfRight()
 	motor[motorE] = 0;
 }
 
-
-void turnHalfLeft()
+void turnTinyLeft()
 {
-	int ticks = 0;
-	motor[motorD] = 35;
-	motor[motorE] = -35;
+	int ticks = 50;
+	motor[motorD] = -35;
+	motor[motorE] = 35;
+	nMotorEncoder[motorE] = 0;
+	while(nMotorEncoder[motorE] < ticks)
+	{
+		wait10Msec(1);
+	}
+	motor[motorD] = 0;
+	motor[motorE] = 0;
+}
+
+void turnHalfRight()
+{
+	int ticks = 1325;
+	motor[motorD] = 50;
+	motor[motorE] = -50;
 	nMotorEncoder[motorD] = 0;
 	while(nMotorEncoder[motorD] < ticks)
 	{
@@ -72,11 +85,11 @@ void turnHalfLeft()
 	motor[motorE] = 0;
 }
 
-void turnRight()
+void turnLeft()
 {
-	int ticks = 1675;
-	motor[motorD] = -35;
-	motor[motorE] = 35;
+	int ticks = 1875;
+	motor[motorD] = -50;
+	motor[motorE] = 50;
 	nMotorEncoder[motorE] = 0;
 	while(nMotorEncoder[motorE] < ticks)
 	{
@@ -87,7 +100,7 @@ void turnRight()
 	wait1Msec(1);
 }
 
-void turnLeft()
+void turnRight()
 {
 	int ticks = 1975;
 	motor[motorD] = 35;
@@ -133,7 +146,7 @@ void detectedIR()
 
 void placeAutonomousBlock()
 {
-	int ticks = 287;// 4.5 inches   //have ticks set for the distance from the first crate
+	int ticks = 287;// 4.5 inches	//have ticks set for the distance from the first crate
 	motor[motorD] = 35;
 	motor[motorE] = 35;
 	nMotorEncoder[motorD] = 0;
@@ -143,8 +156,8 @@ void placeAutonomousBlock()
 	}
 	motor[motorD] = 0;
 	motor[motorE] = 0;
-	turnHalfLeft();
-	ticks = 0;      //have ticks set for the distance to park in front of first crate
+	turnHalfRight();
+	ticks = 0;	//have ticks set for the distance to park in front of first crate
 	motor[motorD] = 35;
 	motor[motorE] = 35;
 	nMotorEncoder[motorD] = 0;
@@ -202,22 +215,22 @@ void reposition()
 
 //void detectLine()
 //{
-//                              Timer[T1] = 0;
-//              while(Timer[T1] < 10000)                           // Infinite loop
-//                      {
-//                       if(SensorValue(lightSensor) < 45)  // If the Light Sensor reads a value less than 45:
-//                         {
-//                            motor[motorD] = 0;
-//                            motor[motorE] = 0;
-//                            wait10Msec(1);
-//                         }
-//                         else                               // If the Light Sensor reads a value greater than or equal to 45:
-//                        {
-//                              motor[motorD] = 35;
-//                              motor[motorE] = 35;
-//                              wait10Msec(1);
-//                        }
-//                      }
+//				Timer[T1] = 0;
+//  	  	while(Timer[T1] < 10000)                           // Infinite loop
+//   			{
+//     			 if(SensorValue(lightSensor) < 45)  // If the Light Sensor reads a value less than 45:
+//   			   {
+//  			      motor[motorD] = 0;
+//  			      motor[motorE] = 0;
+//  			      wait10Msec(1);
+//   			   }
+//   			   else                               // If the Light Sensor reads a value greater than or equal to 45:
+//    			  {
+//    			  	motor[motorD] = 35;
+//    			  	motor[motorE] = 35;
+//    			  	wait10Msec(1);
+//     			  }
+//  			}
 //have the robot detect the first line of white tape (not worth trying to block an enemy robot by going to their side of
 //the field, because at this point it is likely they are already there, and that would only mess with us
 //}
@@ -237,33 +250,69 @@ void climbRamp()
 	turnHalfLeft();
 	ticks = 0; //ticks are set to the distance until the next half turn
 	turnHalfLeft();
-	//                      detectLine();
+	//  			detectLine();
 }
 void turnCircle()
 {
-	turnHalfRight();
+	turnLeft();
+	wait1Msec(2000);
+	turnLeft();
+	wait1Msec(2000);
+	turnLeft();
+	wait1Msec(2000);
+	turnLeft();
+}
+
+void move(int leftPower, int rightPower, int ticks)
+{
+	motor[motorD] = leftPower;//15
+	motor[motorE] = rightPower;//15
+	nMotorEncoder[motorD] = 0;
+	while(nMotorEncoder[motorD] < ticks)
+	{
+		wait10Msec(1);
+	}
+	motor[motorD] = 0;
+	motor[motorE] = 0;
 	wait1Msec(1000);
-	turnHalfRight();
-	wait1Msec(1000);
-	turnHalfRight();
-	wait1Msec(1000);
-	turnHalfRight();
 }
 
 // main task
 task main()
 {
-	initializeRobot();
-	score();
-	//turnRight();
-	//turnLeft();
-	//turnCircle();
-	//waitForStart();
 	//initializeRobot();
-	//placeAutonomousBlock();
-	//reposition();
-	//climbRamp();
+	//wait1Msec(3000);
+	//waitForStart();
 
+	//get off the wall
+	move(15,15,750);
+	//set parrallel to baskets
+	turnHalfRight();
+	wait1Msec(1000);
+	//score basket 1
+	move(15,26,650);
+	score();
+	//score bastket 2
+	move(15,26,1000);
+	score();
+	//score basket 3
+	move(15,26,2150);
+	score();
+	//score basket 4
+	move(15,26,1000);
+	score();
+	//move past last basket
+	move(15,15,2250);
+	//turn towards ramp
+	turnLeft();
+	wait1Msec(1000);
+	//line up with ramp
+	move(15,15,4000);
+	//turn to line up with ramp
+	turnLeft();
+	wait1Msec(1000);
+	//move up ramp
+	move(45,50,4000);
 	//nxtDisplayCenteredBigTextLine(6, "Sig=%d", SensorValue[lightSensor]);
 }
 //http://www.hitechnic.com/cgi-bin/commerce.cgi?preadd=action&key=SPR2010
